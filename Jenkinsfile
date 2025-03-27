@@ -81,6 +81,19 @@ pipeline {
             }
         }
 
+        // stage('SonarQube Quality Gate') {
+        //     steps {
+        //         script {
+        //             timeout(time: 5, unit: 'MINUTES') { // Wait up to 5 minutes for results
+        //                 def qualityGate = waitForQualityGate()
+        //                 if (qualityGate.status != 'OK') {
+        //                     error "SonarQube Quality Gate failed: ${qualityGate.status}"
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+
         stage('Build') {
             steps {
                 sh "mvn clean package"
@@ -106,7 +119,21 @@ pipeline {
                 """
             }
         }
-        
+
+        // stage('Trivy Scan for Docker Image') {
+        //     steps {
+        //         script {
+        //             def scanResult = sh(script: """
+        //                 trivy image --exit-code 1 --severity CRITICAL myrepo/database_service:${IMAGE_TAG} || echo "VULNERABILITIES_FOUND"
+        //             """, returnStdout: true).trim()
+
+        //             if (scanResult.contains("VULNERABILITIES_FOUND")) {
+        //                 error "Critical vulnerabilities found in Docker image! Aborting build."
+        //             }
+        //         }
+        //     }
+        // }
+
         stage('Install AWS CLI') {
             steps {
                 script {
